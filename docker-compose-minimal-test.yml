@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres-simple:
+    image: postgres:15-alpine
+    deploy:
+      replicas: 1
+    environment:
+      - POSTGRES_PASSWORD=testpass123
+      - POSTGRES_DB=librenms
+      - POSTGRES_USER=librenms
+    ports:
+      - "5432:5432"
+    volumes:
+      - test_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  test_postgres_data:
+
+networks:
+  default:
+    driver: overlay
