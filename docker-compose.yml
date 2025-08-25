@@ -13,6 +13,7 @@ services:
       PUID: 1000
       PGID: 1000
       DB_HOST: db
+      DB_PORT: 5432
       DB_NAME: librenms
       DB_USER: librenms
       DB_PASSWORD: secure_librenms_password_change_me
@@ -43,23 +44,16 @@ services:
       - librenms_net
 
   db:
-    image: mariadb:10.6
+    image: postgres:15-alpine
     container_name: librenms_db
     restart: unless-stopped
     environment:
-      - MARIADB_ROOT_PASSWORD=secure_root_password_change_me
-      - MARIADB_DATABASE=librenms
-      - MARIADB_USER=librenms
-      - MARIADB_PASSWORD=secure_librenms_password_change_me
+      - POSTGRES_DB=librenms
+      - POSTGRES_USER=librenms
+      - POSTGRES_PASSWORD=secure_librenms_password_change_me
       - TZ=UTC
     volumes:
-      - ./librenms/mysql:/var/lib/mysql
-    command:
-      - "mysqld"
-      - "--innodb-file-per-table=1"
-      - "--lower-case-table-names=0"
-      - "--character-set-server=utf8mb4"
-      - "--collation-server=utf8mb4_unicode_ci"
+      - ./librenms/postgres:/var/lib/postgresql/data
     networks:
       - librenms_net
 
@@ -82,6 +76,7 @@ services:
       PUID: 1000
       PGID: 1000
       DB_HOST: db
+      DB_PORT: 5432
       DB_NAME: librenms
       DB_USER: librenms
       DB_PASSWORD: secure_librenms_password_change_me
@@ -115,6 +110,7 @@ services:
       PUID: 1000
       PGID: 1000
       DB_HOST: db
+      DB_PORT: 5432
       DB_NAME: librenms
       DB_USER: librenms
       DB_PASSWORD: secure_librenms_password_change_me
@@ -145,6 +141,7 @@ services:
       PUID: 1000
       PGID: 1000
       DB_HOST: db
+      DB_PORT: 5432
       DB_NAME: librenms
       DB_USER: librenms
       DB_PASSWORD: secure_librenms_password_change_me
@@ -171,5 +168,5 @@ volumes:
   librenms_logs:
   librenms_rrd:
   librenms_storage:
-  librenms_mysql:
+  librenms_postgres:
   librenms_syslog:

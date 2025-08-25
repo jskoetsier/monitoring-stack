@@ -5,7 +5,7 @@ This Docker Compose configuration provides a complete LibreNMS installation with
 ## Services Included
 
 - **LibreNMS**: Main web interface accessible on port 7000
-- **MariaDB**: Database backend for LibreNMS data
+- **PostgreSQL**: Database backend for LibreNMS data
 - **Redis**: Caching and session storage
 - **Dispatcher**: Background job processing
 - **Syslog-ng**: Syslog message collection (port 514 UDP/TCP)
@@ -21,8 +21,7 @@ This Docker Compose configuration provides a complete LibreNMS installation with
    ```
    
    **IMPORTANT**: Change the default passwords in the docker-compose.yml file before starting:
-   - `MARIADB_ROOT_PASSWORD`
-   - `MARIADB_PASSWORD` and `DB_PASSWORD` (both should match)
+   - `POSTGRES_PASSWORD` and `DB_PASSWORD` (both should match)
 
 3. **Start the services**:
    ```bash
@@ -55,7 +54,7 @@ librenms/
 ├── logs/          # Application logs
 ├── rrd/           # RRD database files
 ├── storage/       # File storage
-├── mysql/         # Database files
+├── postgres/      # Database files
 └── syslog/        # Syslog files
 ```
 

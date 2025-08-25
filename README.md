@@ -28,8 +28,7 @@ This repository provides a complete, production-ready LibreNMS deployment using 
 
 2. **Configure passwords**:
    Edit `docker-compose.yml` and update the following passwords:
-   - `MARIADB_ROOT_PASSWORD`
-   - `MARIADB_PASSWORD` and `DB_PASSWORD`
+   - `POSTGRES_PASSWORD` and `DB_PASSWORD` (both should match)
 
 3. **Deploy the stack**:
    
@@ -51,7 +50,7 @@ This repository provides a complete, production-ready LibreNMS deployment using 
 ## Services
 
 - **LibreNMS**: Main monitoring application (port 7000)
-- **MariaDB**: Database backend
+- **PostgreSQL**: Database backend
 - **Redis**: Caching and session storage
 - **Dispatcher**: Background job processing
 - **Syslog-ng**: Log collection service (port 514)

@@ -2,6 +2,24 @@
 
 All notable changes to this monitoring stack project will be documented in this file.
 
+## [1.3.0] - Switch to PostgreSQL
+
+### Changed
+- **BREAKING**: Replaced MariaDB with PostgreSQL 15 Alpine for better Docker Swarm compatibility
+- Updated all database environment variables to use `POSTGRES_*` format
+- Added `DB_PORT=5432` to all LibreNMS services for PostgreSQL connection
+- Updated volume names from `librenms_mysql` to `librenms_postgres`
+- Updated documentation to reflect PostgreSQL usage
+
+### Fixed
+- Resolved persistent MariaDB environment variable issues in Docker Swarm
+- Improved database reliability in containerized environments
+- Fixed database initialization problems
+
+### Added
+- New PostgreSQL test configuration (`docker-compose-postgres-test.yml`)
+- Enhanced Docker Swarm compatibility
+
 ## [1.2.1] - MariaDB Environment Variables Fix
 
 ### Fixed
