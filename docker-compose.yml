@@ -7,7 +7,7 @@ services:
     hostname: librenms
     restart: unless-stopped
     ports:
-      - "8001:8000"
+      - "7000:8000"
     environment:
       - TZ=UTC
       - PUID=1000
@@ -20,7 +20,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_DB=0
-      - BASE_URL=http://localhost:8001
+      - BASE_URL=http://localhost:7000
       - POLLERS=16
       - CRON_FPING=true
       - CRON_DISCOVERY_ENABLE=true

@@ -4,7 +4,7 @@ This Docker Compose configuration provides a complete LibreNMS installation with
 
 ## Services Included
 
-- **LibreNMS**: Main web interface accessible on port 8001
+- **LibreNMS**: Main web interface accessible on port 7000
 - **MariaDB**: Database backend for LibreNMS data
 - **Redis**: Caching and session storage
 - **Dispatcher**: Background job processing
@@ -35,7 +35,7 @@ This Docker Compose configuration provides a complete LibreNMS installation with
    ```
 
 5. **Access LibreNMS**:
-   - Open your web browser to: http://localhost:8001
+   - Open your web browser to: http://localhost:7000
    - Follow the web installer to complete setup
 
 ## Initial Setup
@@ -92,7 +92,7 @@ docker-compose down -v
 
 ## Port Configuration
 
-- **8001**: LibreNMS web interface
+- **7000**: LibreNMS web interface
 - **514**: Syslog receiver (UDP/TCP)
 - **162**: SNMP trap receiver (UDP)
 

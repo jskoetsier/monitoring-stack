@@ -2,6 +2,13 @@
 
 All notable changes to this monitoring stack project will be documented in this file.
 
+## [1.1.0] - Port Update
+
+### Changed
+- Updated LibreNMS web interface port from 8001 to 7000
+- Updated BASE_URL configuration to reflect new port
+- Updated all documentation to reference new port 7000
+
 ## [1.0.0] - Initial Release
 
 ### Added
@@ -16,12 +23,12 @@ All notable changes to this monitoring stack project will be documented in this 
 - Production-ready security considerations
 - Persistent data storage with Docker volumes
 - Network monitoring capabilities with SNMP autodiscovery
-- Web interface accessible on configurable port (default: 8001)
+- Web interface accessible on configurable port (default: 7000)
 - Alert management system
 - Performance monitoring with RRD graphing
 
 ### Configuration
-- LibreNMS web interface exposed on port 8001
+- LibreNMS web interface exposed on port 7000
 - Syslog collection on port 514 (UDP/TCP)
 - SNMP trap reception on port 162 (UDP)
 - Customizable polling intervals and worker processes

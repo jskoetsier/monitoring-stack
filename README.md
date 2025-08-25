@@ -38,13 +38,13 @@ This repository provides a complete, production-ready LibreNMS deployment using 
    ```
 
 4. **Access LibreNMS**:
-   - Open http://localhost:8001
+   - Open http://localhost:7000
    - Follow the web installer
    - Create your admin account
 
 ## Services
 
-- **LibreNMS**: Main monitoring application (port 8001)
+- **LibreNMS**: Main monitoring application (port 7000)
 - **MariaDB**: Database backend
 - **Redis**: Caching and session storage
 - **Dispatcher**: Background job processing
