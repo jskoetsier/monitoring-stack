@@ -32,8 +32,15 @@ This repository provides a complete, production-ready LibreNMS deployment using 
    - `MYSQL_PASSWORD` and `DB_PASSWORD`
 
 3. **Deploy the stack**:
+   
+   **Docker Compose:**
    ```bash
    docker-compose up -d
+   ```
+   
+   **Docker Swarm:**
+   ```bash
+   docker stack deploy -c docker-compose.yml monitoring
    ```
 
 4. **Access LibreNMS**:

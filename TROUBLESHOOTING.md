@@ -5,11 +5,10 @@
 If you encounter this error during deployment, try these solutions in order:
 
 ### Solution 1: Clean Start with Volume Removal
-```bash
-# Stop all containers
-docker-compose down
 
-# Remove volumes to clear any cached database state
+#### For Docker Compose:
+```bash
+# Stop all containers and remove volumes
 docker-compose down -v
 
 # Remove any existing LibreNMS data directories
@@ -20,6 +19,31 @@ docker-compose pull
 
 # Start services
 docker-compose up -d
+```
+
+#### For Docker Swarm:
+```bash
+# Remove the stack (replace 'monitoring' with your stack name)
+docker stack rm monitoring
+
+# Wait for stack to be completely removed
+docker stack ls
+
+# Remove volumes (list them first to see what exists)
+docker volume ls | grep monitoring
+docker volume rm $(docker volume ls -q | grep monitoring)
+
+# Remove any existing LibreNMS data directories
+sudo rm -rf librenms/
+
+# Prune unused containers, networks, and images
+docker system prune -f
+
+# Pull latest images on all nodes
+docker-compose pull
+
+# Redeploy the stack
+docker stack deploy -c docker-compose.yml monitoring
 ```
 
 ### Solution 2: Check Environment Variables
@@ -70,6 +94,8 @@ image: mariadb:10.6
 - Verify the database container name matches `DB_HOST` value
 
 ### Container Won't Start
+
+#### For Docker Compose:
 ```bash
 # Check container logs
 docker-compose logs [service_name]
@@ -79,6 +105,25 @@ docker-compose ps
 
 # Restart specific service
 docker-compose restart [service_name]
+```
+
+#### For Docker Swarm:
+```bash
+# Check service status
+docker service ls
+
+# Check service logs (replace 'monitoring_librenms' with your service name)
+docker service logs monitoring_librenms
+
+# Check service details
+docker service inspect monitoring_librenms
+
+# Scale service (restart by scaling to 0 then back to 1)
+docker service scale monitoring_librenms=0
+docker service scale monitoring_librenms=1
+
+# Update service to force restart
+docker service update --force monitoring_librenms
 ```
 
 ### Performance Issues
