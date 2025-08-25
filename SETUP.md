@@ -21,8 +21,8 @@ This Docker Compose configuration provides a complete LibreNMS installation with
    ```
    
    **IMPORTANT**: Change the default passwords in the docker-compose.yml file before starting:
-   - `MYSQL_ROOT_PASSWORD`
-   - `MYSQL_PASSWORD` and `DB_PASSWORD` (both should match)
+   - `MARIADB_ROOT_PASSWORD`
+   - `MARIADB_PASSWORD` and `DB_PASSWORD` (both should match)
 
 3. **Start the services**:
    ```bash
