@@ -12,11 +12,10 @@ All notable changes to this monitoring stack project will be documented in this 
 - Updated all documentation to reference correct environment variable names
 
 ### Changed
-- `MYSQL_ROOT_PASSWORD` → `MARIADB_ROOT_PASSWORD`
-- `MYSQL_DATABASE` → `MARIADB_DATABASE` 
-- `MYSQL_USER` → `MARIADB_USER`
-- `MYSQL_PASSWORD` → `MARIADB_PASSWORD`
+- MariaDB version from 10.11 to 10.6 for better stability
+- MariaDB environment variables back to `MYSQL_*` format for compatibility
 - Environment variable format: `- KEY=value` → `KEY: value`
+- Added comprehensive troubleshooting guide
 
 ## [1.2.0] - Docker Swarm Compatibility
 
