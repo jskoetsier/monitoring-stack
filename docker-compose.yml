@@ -8,26 +8,36 @@ services:
       restart_policy:
         condition: on-failure
         delay: 10s
-        max_attempts: 3
+        max_attempts: 5
+        window: 120s
       placement:
         constraints:
           - node.role == manager
+      resources:
+        reservations:
+          memory: 512M
+        limits:
+          memory: 1G
     environment:
       MYSQL_ROOT_PASSWORD: "LibreNMS123!"
       MYSQL_DATABASE: "librenms"
       MYSQL_USER: "librenms"
       MYSQL_PASSWORD: "LibreNMS123!"
       TZ: "UTC"
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - librenms_net
     command: >
       --default-authentication-plugin=mysql_native_password
-      --innodb-buffer-pool-size=512M
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
-      --bind-address=0.0.0.0
+      --sql-mode=ALLOW_INVALID_DATES
+      --lower-case-table-names=0
+      --innodb-file-per-table=1
+      --innodb-buffer-pool-size=512M
 
   redis:
     image: redis:7-alpine
@@ -42,7 +52,7 @@ services:
           - node.role == manager
     networks:
       - librenms_net
-    command: redis-server --appendonly yes
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
 
   librenms:
     image: librenms/librenms:latest
@@ -50,12 +60,17 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-        delay: 60s
-        max_attempts: 5
+        delay: 30s
+        max_attempts: 10
         window: 300s
       placement:
         constraints:
           - node.role == manager
+      resources:
+        reservations:
+          memory: 1G
+        limits:
+          memory: 2G
     ports:
       - target: 8000
         published: 7000
@@ -81,13 +96,17 @@ services:
       PGID: "1000"
       BASE_URL: "http://192.168.1.240:7000"
       POLLERS: "4"
+      WORKERS: "1"
+      CRON: "true"
       
-      # Cron jobs
-      CRON_FPING: "true"
-      CRON_DISCOVERY_ENABLE: "true" 
-      CRON_DAILY_ENABLE: "true"
-      CRON_ALERTS_ENABLE: "true"
-      CRON_POLLER_ENABLE: "true"
+      # Optional features
+      MEMORY_LIMIT: "1024M"
+      MAX_EXECUTION_TIME: "300"
+      UPLOAD_MAX_SIZE: "16M"
+      OPCACHE_MEM_SIZE: "128"
+      REAL_IP_FROM: "0.0.0.0/32"
+      REAL_IP_HEADER: "X-Forwarded-For"
+      LOG_IP_VAR: "remote_addr"
     volumes:
       - librenms_data:/data
     networks:
@@ -95,6 +114,101 @@ services:
     depends_on:
       - mysql
       - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/login", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  dispatcher:
+    image: librenms/librenms:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 5
+      placement:
+        constraints:
+          - node.role == manager
+    environment:
+      # Database Configuration
+      DB_HOST: "mysql"
+      DB_PORT: "3306"
+      DB_NAME: "librenms"
+      DB_USER: "librenms"
+      DB_PASSWORD: "LibreNMS123!"
+      DB_TIMEOUT: "300"
+      
+      # Redis Configuration
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_DB: "0"
+      
+      # LibreNMS Configuration
+      TZ: "UTC"
+      PUID: "1000"
+      PGID: "1000"
+      
+      # Dispatcher specific
+      DISPATCHER_NODE_ID: "dispatcher1"
+      MEMORY_LIMIT: "1024M"
+    volumes:
+      - librenms_data:/data
+    networks:
+      - librenms_net
+    depends_on:
+      - mysql
+      - redis
+    command: ["php", "/opt/librenms/artisan", "queue:work", "--daemon"]
+
+  syslog:
+    image: librenms/librenms:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - target: 514
+        published: 514
+        protocol: udp
+        mode: ingress
+    environment:
+      # Database Configuration
+      DB_HOST: "mysql"
+      DB_PORT: "3306"
+      DB_NAME: "librenms"
+      DB_USER: "librenms"
+      DB_PASSWORD: "LibreNMS123!"
+      DB_TIMEOUT: "300"
+      
+      # Redis Configuration
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_DB: "0"
+      
+      # LibreNMS Configuration
+      TZ: "UTC"
+      PUID: "1000"
+      PGID: "1000"
+      
+      # Syslog specific
+      SYSLOG_HOST: "0.0.0.0"
+      SYSLOG_PORT: "514"
+    volumes:
+      - librenms_data:/data
+    networks:
+      - librenms_net
+    depends_on:
+      - mysql
+      - redis
+    command: ["/opt/librenms/syslog.php"]
 
 networks:
   librenms_net:

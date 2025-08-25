@@ -50,11 +50,10 @@ This repository provides a complete, production-ready LibreNMS deployment using 
 ## Services
 
 - **LibreNMS**: Main monitoring application (port 7000)
-- **PostgreSQL**: Database backend
+- **MySQL**: Database backend (port 3306)
 - **Redis**: Caching and session storage
 - **Dispatcher**: Background job processing
-- **Syslog-ng**: Log collection service (port 514)
-- **SNMP Trapd**: SNMP trap receiver (port 162)
+- **Syslog**: Log collection service (port 514)
 
 ## Documentation
 
