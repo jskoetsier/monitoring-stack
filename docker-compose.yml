@@ -1,0 +1,175 @@
+version: '3.8'
+
+services:
+  librenms:
+    image: librenms/librenms:latest
+    container_name: librenms
+    hostname: librenms
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    environment:
+      - TZ=UTC
+      - PUID=1000
+      - PGID=1000
+      - DB_HOST=db
+      - DB_NAME=librenms
+      - DB_USER=librenms
+      - DB_PASSWORD=librenms_password
+      - DB_TIMEOUT=60
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - BASE_URL=http://localhost:8001
+      - POLLERS=16
+      - CRON_FPING=true
+      - CRON_DISCOVERY_ENABLE=true
+      - CRON_DAILY_ENABLE=true
+      - CRON_ALERTS_ENABLE=true
+      - CRON_BILLING_ENABLE=true
+      - CRON_BILLING_CALCULATE_ENABLE=true
+      - CRON_CHECK_SERVICES_ENABLE=true
+      - CRON_POLLER_ENABLE=true
+      - CRON_DISCOVERY_NEW_ENABLE=true
+    volumes:
+      - ./librenms/data:/data
+      - ./librenms/logs:/opt/librenms/logs
+      - ./librenms/rrd:/opt/librenms/rrd
+      - ./librenms/storage:/opt/librenms/storage
+    depends_on:
+      - db
+      - redis
+    networks:
+      - librenms_net
+
+  db:
+    image: mariadb:10.11
+    container_name: librenms_db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=librenms
+      - MYSQL_USER=librenms
+      - MYSQL_PASSWORD=librenms_password
+      - TZ=UTC
+    volumes:
+      - ./librenms/mysql:/var/lib/mysql
+    command:
+      - "mysqld"
+      - "--innodb-file-per-table=1"
+      - "--lower-case-table-names=0"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    networks:
+      - librenms_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: librenms_redis
+    restart: unless-stopped
+    environment:
+      - TZ=UTC
+    networks:
+      - librenms_net
+
+  dispatcher:
+    image: librenms/librenms:latest
+    container_name: librenms_dispatcher
+    hostname: librenms-dispatcher
+    restart: unless-stopped
+    environment:
+      - TZ=UTC
+      - PUID=1000
+      - PGID=1000
+      - DB_HOST=db
+      - DB_NAME=librenms
+      - DB_USER=librenms
+      - DB_PASSWORD=librenms_password
+      - DB_TIMEOUT=60
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - DISPATCHER_NODE_ID=dispatcher1
+      - SIDECAR_DISPATCHER=1
+    volumes:
+      - ./librenms/data:/data
+      - ./librenms/logs:/opt/librenms/logs
+      - ./librenms/rrd:/opt/librenms/rrd
+      - ./librenms/storage:/opt/librenms/storage
+    depends_on:
+      - librenms
+      - redis
+    networks:
+      - librenms_net
+
+  syslogng:
+    image: librenms/librenms:latest
+    container_name: librenms_syslogng
+    hostname: librenms-syslogng
+    restart: unless-stopped
+    ports:
+      - "514:514/udp"
+      - "514:514/tcp"
+    environment:
+      - TZ=UTC
+      - PUID=1000
+      - PGID=1000
+      - DB_HOST=db
+      - DB_NAME=librenms
+      - DB_USER=librenms
+      - DB_PASSWORD=librenms_password
+      - DB_TIMEOUT=60
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - SIDECAR_SYSLOGNG=1
+    volumes:
+      - ./librenms/data:/data
+      - ./librenms/logs:/opt/librenms/logs
+      - ./librenms/syslog:/opt/librenms/syslog
+    depends_on:
+      - librenms
+      - redis
+    networks:
+      - librenms_net
+
+  snmptrapd:
+    image: librenms/librenms:latest
+    container_name: librenms_snmptrapd
+    hostname: librenms-snmptrapd
+    restart: unless-stopped
+    ports:
+      - "162:162/udp"
+    environment:
+      - TZ=UTC
+      - PUID=1000
+      - PGID=1000
+      - DB_HOST=db
+      - DB_NAME=librenms
+      - DB_USER=librenms
+      - DB_PASSWORD=librenms_password
+      - DB_TIMEOUT=60
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - SIDECAR_SNMPTRAPD=1
+    volumes:
+      - ./librenms/data:/data
+      - ./librenms/logs:/opt/librenms/logs
+    depends_on:
+      - librenms
+      - redis
+    networks:
+      - librenms_net
+
+networks:
+  librenms_net:
+    driver: bridge
+
+volumes:
+  librenms_data:
+  librenms_logs:
+  librenms_rrd:
+  librenms_storage:
+  librenms_mysql:
+  librenms_syslog:
