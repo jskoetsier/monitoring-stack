@@ -19,7 +19,7 @@ This Docker Compose configuration provides a complete LibreNMS installation with
    ```bash
    nano docker-compose.yml
    ```
-   
+
    **IMPORTANT**: Change the default passwords in the docker-compose.yml file before starting:
    - `POSTGRES_PASSWORD` and `DB_PASSWORD` (both should match)
 

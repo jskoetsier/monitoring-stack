@@ -31,12 +31,12 @@ This repository provides a complete, production-ready LibreNMS deployment using 
    - `POSTGRES_PASSWORD` and `DB_PASSWORD` (both should match)
 
 3. **Deploy the stack**:
-   
+
    **Docker Compose:**
    ```bash
    docker-compose up -d
    ```
-   
+
    **Docker Swarm:**
    ```bash
    docker stack deploy -c docker-compose.yml monitoring
