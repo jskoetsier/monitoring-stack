@@ -2,6 +2,19 @@
 
 All notable changes to this monitoring stack project will be documented in this file.
 
+## [1.2.1] - MariaDB Environment Variables Fix
+
+### Fixed
+- Updated MariaDB environment variables from `MYSQL_*` to `MARIADB_*` format
+- Fixed database initialization error for MariaDB 10.11+
+- Updated all documentation to reference correct environment variable names
+
+### Changed
+- `MYSQL_ROOT_PASSWORD` → `MARIADB_ROOT_PASSWORD`
+- `MYSQL_DATABASE` → `MARIADB_DATABASE` 
+- `MYSQL_USER` → `MARIADB_USER`
+- `MYSQL_PASSWORD` → `MARIADB_PASSWORD`
+
 ## [1.2.0] - Docker Swarm Compatibility
 
 ### Changed

@@ -28,8 +28,8 @@ This repository provides a complete, production-ready LibreNMS deployment using 
 
 2. **Configure passwords**:
    Edit `docker-compose.yml` and update the following passwords:
-   - `MYSQL_ROOT_PASSWORD`
-   - `MYSQL_PASSWORD` and `DB_PASSWORD`
+   - `MARIADB_ROOT_PASSWORD`
+   - `MARIADB_PASSWORD` and `DB_PASSWORD`
 
 3. **Deploy the stack**:
    ```bash
