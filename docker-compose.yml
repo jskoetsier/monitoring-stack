@@ -47,11 +47,11 @@ services:
     container_name: librenms_db
     restart: unless-stopped
     environment:
-      MARIADB_ROOT_PASSWORD: "secure_root_password_change_me"
-      MARIADB_DATABASE: "librenms"
-      MARIADB_USER: "librenms"
-      MARIADB_PASSWORD: "secure_librenms_password_change_me"
-      TZ: "UTC"
+      - MARIADB_ROOT_PASSWORD=secure_root_password_change_me
+      - MARIADB_DATABASE=librenms
+      - MARIADB_USER=librenms
+      - MARIADB_PASSWORD=secure_librenms_password_change_me
+      - TZ=UTC
     volumes:
       - ./librenms/mysql:/var/lib/mysql
     command:

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  db-test:
+    image: mariadb:10.6
+    container_name: test_mariadb
+    restart: unless-stopped
+    environment:
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=yes
+      - MARIADB_DATABASE=librenms
+      - MARIADB_USER=librenms
+      - MARIADB_PASSWORD=testpass123
+      - TZ=UTC
+    ports:
+      - "3306:3306"
+    command:
+      - "mysqld"
+      - "--innodb-file-per-table=1"
+      - "--lower-case-table-names=0"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+
+networks:
+  default:
+    driver: bridge
