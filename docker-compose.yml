@@ -9,28 +9,28 @@ services:
     ports:
       - "7000:8000"
     environment:
-      - TZ=UTC
-      - PUID=1000
-      - PGID=1000
-      - DB_HOST=db
-      - DB_NAME=librenms
-      - DB_USER=librenms
-      - DB_PASSWORD=secure_librenms_password_change_me
-      - DB_TIMEOUT=60
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_DB=0
-      - BASE_URL=http://localhost:7000
-      - POLLERS=16
-      - CRON_FPING=true
-      - CRON_DISCOVERY_ENABLE=true
-      - CRON_DAILY_ENABLE=true
-      - CRON_ALERTS_ENABLE=true
-      - CRON_BILLING_ENABLE=true
-      - CRON_BILLING_CALCULATE_ENABLE=true
-      - CRON_CHECK_SERVICES_ENABLE=true
-      - CRON_POLLER_ENABLE=true
-      - CRON_DISCOVERY_NEW_ENABLE=true
+      TZ: UTC
+      PUID: 1000
+      PGID: 1000
+      DB_HOST: db
+      DB_NAME: librenms
+      DB_USER: librenms
+      DB_PASSWORD: secure_librenms_password_change_me
+      DB_TIMEOUT: 60
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      BASE_URL: http://localhost:7000
+      POLLERS: 16
+      CRON_FPING: true
+      CRON_DISCOVERY_ENABLE: true
+      CRON_DAILY_ENABLE: true
+      CRON_ALERTS_ENABLE: true
+      CRON_BILLING_ENABLE: true
+      CRON_BILLING_CALCULATE_ENABLE: true
+      CRON_CHECK_SERVICES_ENABLE: true
+      CRON_POLLER_ENABLE: true
+      CRON_DISCOVERY_NEW_ENABLE: true
     volumes:
       - ./librenms/data:/data
       - ./librenms/logs:/opt/librenms/logs
@@ -47,11 +47,11 @@ services:
     container_name: librenms_db
     restart: unless-stopped
     environment:
-      - MARIADB_ROOT_PASSWORD=secure_root_password_change_me
-      - MARIADB_DATABASE=librenms
-      - MARIADB_USER=librenms
-      - MARIADB_PASSWORD=secure_librenms_password_change_me
-      - TZ=UTC
+      MARIADB_ROOT_PASSWORD: secure_root_password_change_me
+      MARIADB_DATABASE: librenms
+      MARIADB_USER: librenms
+      MARIADB_PASSWORD: secure_librenms_password_change_me
+      TZ: UTC
     volumes:
       - ./librenms/mysql:/var/lib/mysql
     command:
@@ -68,7 +68,7 @@ services:
     container_name: librenms_redis
     restart: unless-stopped
     environment:
-      - TZ=UTC
+      TZ: UTC
     networks:
       - librenms_net
 
@@ -78,19 +78,19 @@ services:
     hostname: librenms-dispatcher
     restart: unless-stopped
     environment:
-      - TZ=UTC
-      - PUID=1000
-      - PGID=1000
-      - DB_HOST=db
-      - DB_NAME=librenms
-      - DB_USER=librenms
-      - DB_PASSWORD=secure_librenms_password_change_me
-      - DB_TIMEOUT=60
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_DB=0
-      - DISPATCHER_NODE_ID=dispatcher1
-      - SIDECAR_DISPATCHER=1
+      TZ: UTC
+      PUID: 1000
+      PGID: 1000
+      DB_HOST: db
+      DB_NAME: librenms
+      DB_USER: librenms
+      DB_PASSWORD: secure_librenms_password_change_me
+      DB_TIMEOUT: 60
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      DISPATCHER_NODE_ID: dispatcher1
+      SIDECAR_DISPATCHER: 1
     volumes:
       - ./librenms/data:/data
       - ./librenms/logs:/opt/librenms/logs
@@ -111,18 +111,18 @@ services:
       - "514:514/udp"
       - "514:514/tcp"
     environment:
-      - TZ=UTC
-      - PUID=1000
-      - PGID=1000
-      - DB_HOST=db
-      - DB_NAME=librenms
-      - DB_USER=librenms
-      - DB_PASSWORD=secure_librenms_password_change_me
-      - DB_TIMEOUT=60
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_DB=0
-      - SIDECAR_SYSLOGNG=1
+      TZ: UTC
+      PUID: 1000
+      PGID: 1000
+      DB_HOST: db
+      DB_NAME: librenms
+      DB_USER: librenms
+      DB_PASSWORD: secure_librenms_password_change_me
+      DB_TIMEOUT: 60
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      SIDECAR_SYSLOGNG: 1
     volumes:
       - ./librenms/data:/data
       - ./librenms/logs:/opt/librenms/logs
@@ -141,18 +141,18 @@ services:
     ports:
       - "162:162/udp"
     environment:
-      - TZ=UTC
-      - PUID=1000
-      - PGID=1000
-      - DB_HOST=db
-      - DB_NAME=librenms
-      - DB_USER=librenms
-      - DB_PASSWORD=secure_librenms_password_change_me
-      - DB_TIMEOUT=60
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_DB=0
-      - SIDECAR_SNMPTRAPD=1
+      TZ: UTC
+      PUID: 1000
+      PGID: 1000
+      DB_HOST: db
+      DB_NAME: librenms
+      DB_USER: librenms
+      DB_PASSWORD: secure_librenms_password_change_me
+      DB_TIMEOUT: 60
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      SIDECAR_SNMPTRAPD: 1
     volumes:
       - ./librenms/data:/data
       - ./librenms/logs:/opt/librenms/logs

@@ -7,6 +7,8 @@ All notable changes to this monitoring stack project will be documented in this 
 ### Fixed
 - Updated MariaDB environment variables from `MYSQL_*` to `MARIADB_*` format
 - Fixed database initialization error for MariaDB 10.11+
+- Fixed LibreNMS environment variable format from list to dictionary style
+- Resolved "DB_HOST must be defined" error in LibreNMS container
 - Updated all documentation to reference correct environment variable names
 
 ### Changed
@@ -14,6 +16,7 @@ All notable changes to this monitoring stack project will be documented in this 
 - `MYSQL_DATABASE` → `MARIADB_DATABASE` 
 - `MYSQL_USER` → `MARIADB_USER`
 - `MYSQL_PASSWORD` → `MARIADB_PASSWORD`
+- Environment variable format: `- KEY=value` → `KEY: value`
 
 ## [1.2.0] - Docker Swarm Compatibility
 
