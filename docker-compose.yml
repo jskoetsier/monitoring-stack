@@ -1,172 +1,110 @@
 version: '3.8'
 
 services:
-  librenms:
-    image: librenms/librenms:latest
-    container_name: librenms
-    hostname: librenms
-    restart: unless-stopped
-    ports:
-      - "7000:8000"
+  mysql:
+    image: mysql:8.0
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.role == manager
     environment:
-      TZ: UTC
-      PUID: 1000
-      PGID: 1000
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: librenms
-      DB_USER: librenms
-      DB_PASSWORD: secure_librenms_password_change_me
-      DB_TIMEOUT: 60
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_DB: 0
-      BASE_URL: http://localhost:7000
-      POLLERS: 16
-      CRON_FPING: true
-      CRON_DISCOVERY_ENABLE: true
-      CRON_DAILY_ENABLE: true
-      CRON_ALERTS_ENABLE: true
-      CRON_BILLING_ENABLE: true
-      CRON_BILLING_CALCULATE_ENABLE: true
-      CRON_CHECK_SERVICES_ENABLE: true
-      CRON_POLLER_ENABLE: true
-      CRON_DISCOVERY_NEW_ENABLE: true
+      MYSQL_ROOT_PASSWORD: "LibreNMS123!"
+      MYSQL_DATABASE: "librenms"
+      MYSQL_USER: "librenms"
+      MYSQL_PASSWORD: "LibreNMS123!"
+      TZ: "UTC"
     volumes:
-      - ./librenms/data:/data
-      - ./librenms/logs:/opt/librenms/logs
-      - ./librenms/rrd:/opt/librenms/rrd
-      - ./librenms/storage:/opt/librenms/storage
-    depends_on:
-      - db
-      - redis
+      - mysql_data:/var/lib/mysql
     networks:
       - librenms_net
-
-  db:
-    image: postgres:15-alpine
-    container_name: librenms_db
-    restart: unless-stopped
-    environment:
-      - POSTGRES_DB=librenms
-      - POSTGRES_USER=librenms
-      - POSTGRES_PASSWORD=secure_librenms_password_change_me
-      - TZ=UTC
-    volumes:
-      - ./librenms/postgres:/var/lib/postgresql/data
-    networks:
-      - librenms_net
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --innodb-buffer-pool-size=512M
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --bind-address=0.0.0.0
 
   redis:
     image: redis:7-alpine
-    container_name: librenms_redis
-    restart: unless-stopped
-    environment:
-      TZ: UTC
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.role == manager
     networks:
       - librenms_net
+    command: redis-server --appendonly yes
 
-  dispatcher:
+  librenms:
     image: librenms/librenms:latest
-    container_name: librenms_dispatcher
-    hostname: librenms-dispatcher
-    restart: unless-stopped
-    environment:
-      TZ: UTC
-      PUID: 1000
-      PGID: 1000
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: librenms
-      DB_USER: librenms
-      DB_PASSWORD: secure_librenms_password_change_me
-      DB_TIMEOUT: 60
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_DB: 0
-      DISPATCHER_NODE_ID: dispatcher1
-      SIDECAR_DISPATCHER: 1
-    volumes:
-      - ./librenms/data:/data
-      - ./librenms/logs:/opt/librenms/logs
-      - ./librenms/rrd:/opt/librenms/rrd
-      - ./librenms/storage:/opt/librenms/storage
-    depends_on:
-      - librenms
-      - redis
-    networks:
-      - librenms_net
-
-  syslogng:
-    image: librenms/librenms:latest
-    container_name: librenms_syslogng
-    hostname: librenms-syslogng
-    restart: unless-stopped
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+        max_attempts: 5
+        window: 300s
+      placement:
+        constraints:
+          - node.role == manager
     ports:
-      - "514:514/udp"
-      - "514:514/tcp"
+      - target: 8000
+        published: 7000
+        protocol: tcp
+        mode: ingress
     environment:
-      TZ: UTC
-      PUID: 1000
-      PGID: 1000
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: librenms
-      DB_USER: librenms
-      DB_PASSWORD: secure_librenms_password_change_me
-      DB_TIMEOUT: 60
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_DB: 0
-      SIDECAR_SYSLOGNG: 1
+      # Database Configuration
+      DB_HOST: "mysql"
+      DB_PORT: "3306"
+      DB_NAME: "librenms"
+      DB_USER: "librenms"
+      DB_PASSWORD: "LibreNMS123!"
+      DB_TIMEOUT: "300"
+      
+      # Redis Configuration
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_DB: "0"
+      
+      # LibreNMS Configuration
+      TZ: "UTC"
+      PUID: "1000"
+      PGID: "1000"
+      BASE_URL: "http://192.168.1.240:7000"
+      POLLERS: "4"
+      
+      # Cron jobs
+      CRON_FPING: "true"
+      CRON_DISCOVERY_ENABLE: "true" 
+      CRON_DAILY_ENABLE: "true"
+      CRON_ALERTS_ENABLE: "true"
+      CRON_POLLER_ENABLE: "true"
     volumes:
-      - ./librenms/data:/data
-      - ./librenms/logs:/opt/librenms/logs
-      - ./librenms/syslog:/opt/librenms/syslog
-    depends_on:
-      - librenms
-      - redis
+      - librenms_data:/data
     networks:
       - librenms_net
-
-  snmptrapd:
-    image: librenms/librenms:latest
-    container_name: librenms_snmptrapd
-    hostname: librenms-snmptrapd
-    restart: unless-stopped
-    ports:
-      - "162:162/udp"
-    environment:
-      TZ: UTC
-      PUID: 1000
-      PGID: 1000
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: librenms
-      DB_USER: librenms
-      DB_PASSWORD: secure_librenms_password_change_me
-      DB_TIMEOUT: 60
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_DB: 0
-      SIDECAR_SNMPTRAPD: 1
-    volumes:
-      - ./librenms/data:/data
-      - ./librenms/logs:/opt/librenms/logs
     depends_on:
-      - librenms
+      - mysql
       - redis
-    networks:
-      - librenms_net
 
 networks:
   librenms_net:
-    driver: bridge
+    driver: overlay
+    attachable: true
+    driver_opts:
+      encrypted: "true"
 
 volumes:
+  mysql_data:
+    driver: local
   librenms_data:
-  librenms_logs:
-  librenms_rrd:
-  librenms_storage:
-  librenms_postgres:
-  librenms_syslog:
+    driver: local
