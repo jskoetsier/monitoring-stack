@@ -16,10 +16,15 @@ sleep 10
 echo "🗑️  Removing old volumes..."
 docker volume ls -q | grep -E "(monitoring|librenms)" | xargs docker volume rm 2>/dev/null || true
 
+# Clean up existing Docker secrets
+echo "🔐 Cleaning up existing Docker secrets..."
+docker secret rm postgres_root_password 2>/dev/null || true
+docker secret rm postgres_user_password 2>/dev/null || true
+
 # Create Docker secrets for passwords
-echo "🔐 Creating Docker secrets..."
-echo "secure_root_password_$(date +%s)" | docker secret create postgres_root_password - 2>/dev/null || docker secret rm postgres_root_password && echo "secure_root_password_$(date +%s)" | docker secret create postgres_root_password -
-echo "librenms_password_$(date +%s)" | docker secret create postgres_user_password - 2>/dev/null || docker secret rm postgres_user_password && echo "librenms_password_$(date +%s)" | docker secret create postgres_user_password -
+echo "🔐 Creating new Docker secrets..."
+echo "secure_root_password_$(date +%s)" | docker secret create postgres_root_password -
+echo "librenms_password_$(date +%s)" | docker secret create postgres_user_password -
 
 # Create the working docker-compose file
 cat > docker-compose-working.yml << 'EOF'
