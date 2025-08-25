@@ -2,6 +2,17 @@
 
 All notable changes to this monitoring stack project will be documented in this file.
 
+## [1.2.0] - Docker Swarm Compatibility
+
+### Changed
+- Removed `.env` file dependency for Docker Swarm compatibility
+- Moved all environment variables directly into `docker-compose.yml`
+- Updated all documentation to reference `docker-compose.yml` instead of `.env`
+- Improved password security with more descriptive default placeholders
+
+### Removed
+- `.env` file (configuration now embedded in docker-compose.yml)
+
 ## [1.1.0] - Port Update
 
 ### Changed

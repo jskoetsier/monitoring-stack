@@ -26,11 +26,10 @@ This repository provides a complete, production-ready LibreNMS deployment using 
    cd monitoring-stack
    ```
 
-2. **Configure environment**:
-   ```bash
-   cp .env .env.local
-   nano .env.local  # Update passwords and settings
-   ```
+2. **Configure passwords**:
+   Edit `docker-compose.yml` and update the following passwords:
+   - `MYSQL_ROOT_PASSWORD`
+   - `MYSQL_PASSWORD` and `DB_PASSWORD`
 
 3. **Deploy the stack**:
    ```bash
@@ -66,7 +65,7 @@ This repository provides a complete, production-ready LibreNMS deployment using 
 
 ## Security
 
-- Change default passwords in `.env` before deployment
+- Change default passwords in `docker-compose.yml` before deployment
 - Configure firewall rules for exposed ports
 - Regular security updates recommended
 - Use HTTPS in production environments

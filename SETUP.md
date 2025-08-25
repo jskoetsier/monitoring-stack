@@ -15,14 +15,14 @@ This Docker Compose configuration provides a complete LibreNMS installation with
 
 1. **Clone or download** this configuration to your desired directory
 
-2. **Edit the .env file** to customize your installation:
+2. **Edit the docker-compose.yml file** to customize your installation:
    ```bash
-   nano .env
+   nano docker-compose.yml
    ```
    
-   **IMPORTANT**: Change the default passwords in the `.env` file before starting:
+   **IMPORTANT**: Change the default passwords in the docker-compose.yml file before starting:
    - `MYSQL_ROOT_PASSWORD`
-   - `MYSQL_PASSWORD`
+   - `MYSQL_PASSWORD` and `DB_PASSWORD` (both should match)
 
 3. **Start the services**:
    ```bash
@@ -98,7 +98,7 @@ docker-compose down -v
 
 ## Security Considerations
 
-1. **Change default passwords** in the `.env` file
+1. **Change default passwords** in the `docker-compose.yml` file
 2. **Configure firewall rules** to restrict access to necessary ports
 3. **Use HTTPS** in production (consider adding a reverse proxy like nginx)
 4. **Regular backups** of the `librenms/` directory
@@ -125,7 +125,7 @@ docker-compose exec librenms php artisan migrate:status
 ```
 
 ### Performance tuning
-- Adjust `POLLERS` in `.env` file based on your monitoring needs
+- Adjust `POLLERS` in `docker-compose.yml` based on your monitoring needs
 - Monitor resource usage: `docker stats`
 
 ## Backup
